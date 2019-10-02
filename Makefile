@@ -2,12 +2,26 @@
 # Set path to dependencies.
 # Path to protocol buffers, hdf5.
 # OPENBLAS needs to be set only if openblas=yes.
-INC=$(HOME)/local/include
-LIB=$(HOME)/local/lib
-LOCAL_BIN=$(HOME)/local/bin
+# HOME=${HOME}
+
+CURDIR=.
+
+# OPENCV
+OPENCV_INC=$(HOME)/install/opencv-3.0.0-alpha/include
+OPENCV_LIB=$(HOME)/install/opencv-3.0.0-alpha/lib
+
+# the dependency of jpeg needs to be satified by
+# sudo yum install libjpeg-turbo-devel.x86_64 
+
+# PROTOBUF
+# PROTO_INC=/usr/include
+# PROTO_BIN=/bin
+PROTO_INC=$(HOME)/install/protobuf/include/
+PROTO_LIB=$(HOME)/install/protobuf/lib/
+PROTO_BIN=$(HOME)/install/protobuf/bin/
 
 # CUDA.
-CUDA_ROOT=$(HOME)/local/cuda-6.5
+CUDA_ROOT=/usr/local/cuda-10.0/
 
 USE_MPI=no
 USE_CUDA=yes
@@ -33,10 +47,10 @@ PROTO=proto
 PYT=py
 DEPS=deps
 
-LIBFLAGS = -L$(LIB) -L$(CURDIR)/eigenmat
-CPPFLAGS_COMMON = -I$(DEPS) -I$(INC) -I$(CURDIR)/eigenmat -I$(SRC)
-CPPFLAGS = $(CPPFLAGS_COMMON)
-CPPFLAGS_CPU = $(CPPFLAGS_COMMON) -DUSE_GEMM
+LIBFLAGS = -L$(OPENCV_LIB) -L$(PROTO_LIB) -L$(CURDIR)/eigenmat
+CPPFLAGS_COMMON = -I$(DEPS) -I$(OPENCV_INC) -I$(PROTO_INC) -I$(CURDIR)/eigenmat -I$(SRC)
+CPPFLAGS = $(CPPFLAGS_COMMON) -Dcimg_display=0
+CPPFLAGS_CPU = $(CPPFLAGS_COMMON) -DUSE_GEMM -Dcimg_display=0
 LINKFLAGS = -lopencv_core -lopencv_imgcodecs -lopencv_imgproc -lopencv_videoio -lhdf5 -leigenmat -ljpeg -lX11 -lpthread -lprotobuf -ldl
 CXXFLAGS = -O2 -std=c++0x -mtune=native -Wall -Wno-unused-result -Wno-sign-compare
 
@@ -78,7 +92,7 @@ endif
 
 	LIBFLAGS += -L$(CUDA_LIB) -L$(CUDAMAT_DIR)
 	CPPFLAGS += -I$(CUDA_INC) -DUSE_CUDA
-	LINKFLAGS += -lcublas -lcudamat -lcudart -Wl,-rpath=$(CUDAMAT_DIR) -Wl,-rpath=$(LIB) -Wl,-rpath=$(CUDA_LIB)
+	LINKFLAGS += -lcublas -lcudamat -lcudart -Wl,-rpath=$(CUDAMAT_DIR) -Wl,-rpath=$(OPENCV_LIB) -Wl,-rpath=$(CUDA_LIB)
 	TARGETS += $(BIN)/train_convnet $(BIN)/train_convnet_data_parallel $(BIN)/run_grad_check $(BIN)/extract_representation $(BIN)/compute_mean $(BIN)/test_data_handler
 endif
 
@@ -127,11 +141,11 @@ $(OBJ)/%.o: $(APP)/%.cc
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJ)/convnet_config.pb.o : $(PROTO)/convnet_config.proto
-	$(LOCAL_BIN)/protoc -I=$(PROTO) --cpp_out=$(SRC) --python_out=$(PYT) $(PROTO)/convnet_config.proto
+	$(PROTO_BIN)/protoc -I=$(PROTO) --cpp_out=$(SRC) --python_out=$(PYT) $(PROTO)/convnet_config.proto
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(SRC)/convnet_config.pb.cc -o $@
 
 $(OBJ_CPU)/convnet_config.pb.o : $(PROTO)/convnet_config.proto
-	$(LOCAL_BIN)/protoc -I=$(PROTO) --cpp_out=$(SRC) --python_out=$(PYT) $(PROTO)/convnet_config.proto
+	$(PROTO_BIN)/protoc -I=$(PROTO) --cpp_out=$(SRC) --python_out=$(PYT) $(PROTO)/convnet_config.proto
 	$(CXX) -c $(CPPFLAGS_CPU) $(CXXFLAGS) $(SRC)/convnet_config.pb.cc -o $@
 
 clean:

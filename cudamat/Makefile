@@ -1,7 +1,7 @@
 ##################################
 # Set path to dependencies.
 # CUDA.
-CUDA_ROOT=/u/nitish/local/cuda-6.5
+CUDA_ROOT=/usr/local/cuda-10.0/
 #CUDA_ROOT=/pkgs_local/cuda-5.5
 ###################################
 
@@ -10,10 +10,14 @@ CUDA_BIN=$(CUDA_ROOT)/bin
 
 NVCC = $(CUDA_BIN)/nvcc
 FLAGS = -O3 --use_fast_math -v \
-		    -gencode=arch=compute_20,code=sm_20 \
-		    -gencode=arch=compute_30,code=sm_30 \
-		    -gencode=arch=compute_35,code=sm_35 \
-				--compiler-options '-fPIC' --shared -Xlinker -rpath -Xlinker $(CUDA_LIB)
+		      -gencode=arch=compute_35,code=sm_35 \
+		      -gencode=arch=compute_50,code=sm_50 \
+		      -gencode=arch=compute_52,code=sm_52 \
+		      -gencode=arch=compute_60,code=sm_60 \
+		      -gencode=arch=compute_61,code=sm_61 \
+		      -gencode=arch=compute_70,code=sm_70 \
+		      -gencode=arch=compute_75,code=sm_75 \
+		      --compiler-options '-fPIC' --shared -Xlinker -rpath -Xlinker $(CUDA_LIB)
 
 CUDA_CONV_SRC := cudamat_conv_filteracts.cu cudamat_conv_imgacts.cu cudamat_conv_weightacts.cu cudamat_conv_others.cu cudamat_conv_util.cu
 

@@ -267,7 +267,7 @@ void DrawRectange(CImg<float>& img, int xmin, int ymin, int xmax, int ymax, cons
 ImageDisplayer::ImageDisplayer(int width, int height, int num_colors, bool show_separate, const string& title) :
   width_(width), height_(height), num_colors_(num_colors),
   show_separate_(show_separate), title_(title) {
-  disp_.set_title(title_.c_str());
+  // disp_.set_title(title_.c_str());
 }
 
 ImageDisplayer::ImageDisplayer() :
@@ -277,8 +277,8 @@ ImageDisplayer::ImageDisplayer() :
 void ImageDisplayer::DisplayImage(float* data, int num_images, int image_id) {
   CImg<float> img;
   CreateImage(data, num_images, image_id, img);
-  disp_.set_title(title_.c_str());
-  img.display(disp_);
+  // disp_.set_title(title_.c_str());
+  // img.display(disp_);
 }
 
 void ImageDisplayer::CreateImage(const float* data, int num_images, int image_id, CImg<float>& img) {
@@ -367,7 +367,7 @@ void ImageDisplayer::DisplayWeights(float* data, int size, int num_filters, int 
     int pos = (i * img.height()) / num_filters_h;
     img.draw_line(0, pos, img.width(), pos, color);
   }
-  img.display(disp_);
+  // img.display(disp_);
 }
 
 void ImageDisplayer::SetFOV(int size, int stride, int pad1, int pad2,
@@ -426,6 +426,6 @@ void ImageDisplayer::DisplayLocalization(float* data, float* preds, float* gt, i
   }
 
   CImgList<float> img_list(img, img2);
-  img_list.display(disp_);
+  // img_list.display(disp_);
 
 }
